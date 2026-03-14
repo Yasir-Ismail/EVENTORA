@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conflictCount = $conflictStmt->fetchColumn();
 
         if ($conflictCount > 0) {
-            $error = 'Sorry, the selected date (' . htmlspecialchars($event_date) . ') already has a confirmed event. Please choose a different date.';
+            $error = 'Sorry, the selected date (' . date('F d, Y', strtotime($event_date)) . ') already has a confirmed event. Please choose a different date.';
         } else {
             // Insert booking
             $stmt = $pdo->prepare("INSERT INTO bookings (name, phone, event_type, event_date, location, package_id, message, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')");

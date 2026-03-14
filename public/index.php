@@ -73,7 +73,7 @@ $packages = $stmt->fetchAll();
                         </div>
                         <div class="card-body">
                             <h5 class="card-title"><?= htmlspecialchars($service['name']) ?></h5>
-                            <p class="card-text"><?= htmlspecialchars(substr($service['description'], 0, 100)) ?>...</p>
+                            <p class="card-text"><?= htmlspecialchars(substr($service['description'], 0, 100)) . (strlen($service['description']) > 100 ? '...' : '') ?></p>
                         </div>
                     </div>
                 </div>

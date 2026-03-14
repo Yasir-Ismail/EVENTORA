@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $conflictCount = $conflictStmt->fetchColumn();
 
                 if ($conflictCount > 0) {
-                    $error = 'Warning: There is already a confirmed booking on ' . htmlspecialchars($bookingDate) . '. Cannot confirm this booking to prevent double booking.';
+                    $error = 'There is already a confirmed booking on ' . date('F d, Y', strtotime($bookingDate)) . '. Cannot confirm this booking to prevent double booking.';
                 }
             }
         }

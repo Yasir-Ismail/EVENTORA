@@ -45,19 +45,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $error = 'Service name is required.';
         } else {
             // Handle image upload
+            $newImage = null;
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
                 $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
                 $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
                 if (in_array($ext, $allowed)) {
-                    $image = 'service-' . time() . '.' . $ext;
-                    $uploadPath = __DIR__ . '/../assets/images/' . $image;
+                    $newImage = 'service-' . time() . '.' . $ext;
+                    $uploadPath = __DIR__ . '/../assets/images/' . $newImage;
                     move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath);
-                    $stmt = $pdo->prepare("UPDATE services SET name = ?, description = ?, image = ? WHERE id = ?");
-                    $stmt->execute([$name, $description, $image, $id]);
-                } else {
-                    $stmt = $pdo->prepare("UPDATE services SET name = ?, description = ? WHERE id = ?");
-                    $stmt->execute([$name, $description, $id]);
                 }
+            }
+
+            if ($newImage) {
+                $stmt = $pdo->prepare("UPDATE services SET name = ?, description = ?, image = ? WHERE id = ?");
+                $stmt->execute([$name, $description, $newImage, $id]);
             } else {
                 $stmt = $pdo->prepare("UPDATE services SET name = ?, description = ? WHERE id = ?");
                 $stmt->execute([$name, $description, $id]);
@@ -158,7 +159,7 @@ $services = $pdo->query("SELECT * FROM services ORDER BY created_at DESC")->fetc
                                 <?php endif; ?>
                             </td>
                             <td><strong><?= htmlspecialchars($service['name']) ?></strong></td>
-                            <td><?= htmlspecialchars(substr($service['description'], 0, 80)) ?>...</td>
+                            <td><?= htmlspecialchars(substr($service['description'], 0, 80)) . (strlen($service['description']) > 80 ? '...' : '') ?></td>
                             <td><?= date('M d, Y', strtotime($service['created_at'])) ?></td>
                             <td>
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editServiceModal<?= $service['id'] ?>">
